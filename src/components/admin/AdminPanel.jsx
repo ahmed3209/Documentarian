@@ -7,6 +7,8 @@ const TABS = [
   ['samples', 'Work Samples'],
   ['about', 'About & Bio'],
   ['services', 'Services'],
+  ['methods', 'Methods'],
+  ['testimonials', 'Testimonials'],
   ['contact', 'Contact'],
   ['messages', 'Messages'],
   ['danger', 'Danger'],
@@ -302,6 +304,138 @@ function ServicesTab({ data, reload }) {
   );
 }
 
+// ── Methods tab ────────────────────────────────────────────────────────────────
+function MethodsTab({ data, reload }) {
+  const [methods, setMethods] = useState(data.process);
+  const [saving, setSaving] = useState(false);
+
+  function update(id, k, v) { setMethods(ms => ms.map(m => m.id === id ? { ...m, [k]: v } : m)); }
+
+  async function saveAll() {
+    setSaving(true);
+    try {
+      await Promise.all(methods.map(m => supabase.from('process_steps').update({ step_number: m.step, title: m.title, body: m.body }).eq('id', m.id)));
+      reload();
+    } finally { setSaving(false); }
+  }
+
+  async function addMethod() {
+    const maxOrder = Math.max(0, ...methods.map(m => m.display_order || 0)) + 1;
+    const { data: row } = await supabase.from('process_steps').insert({ step_number: '', title: 'New step', body: '', display_order: maxOrder }).select().single();
+    setMethods(ms => [...ms, { id: row.id, step: row.step_number, title: row.title, body: row.body, display_order: row.display_order }]);
+  }
+
+  async function removeMethod(id) {
+    if (!confirm('Remove this method step?')) return;
+    await supabase.from('process_steps').delete().eq('id', id);
+    setMethods(ms => ms.filter(m => m.id !== id));
+    reload();
+  }
+
+  async function reorder(id, dir) {
+    const arr = [...methods];
+    const i = arr.findIndex(m => m.id === id);
+    const j = i + dir;
+    if (j < 0 || j >= arr.length) return;
+    await Promise.all([
+      supabase.from('process_steps').update({ display_order: arr[j].display_order }).eq('id', arr[i].id),
+      supabase.from('process_steps').update({ display_order: arr[i].display_order }).eq('id', arr[j].id),
+    ]);
+    reload();
+  }
+
+  return (
+    <>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 22 }}>
+        <h1 style={{ fontFamily: 'var(--serif-display)', fontStyle: 'italic', fontWeight: 400, fontSize: 48, margin: 0 }}>Methods · {methods.length}</h1>
+        <button className="btn btn-primary" onClick={addMethod}>＋ Add method</button>
+      </div>
+      {methods.map((m, i) => (
+        <div key={m.id} style={{ border: '1px solid var(--hair)', padding: 18, marginBottom: 14, background: i % 2 ? 'var(--paper-2)' : 'transparent' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+            <span className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', color: 'var(--vermillion)', textTransform: 'uppercase' }}>Step #{String(i + 1).padStart(2, '0')}</span>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button className="btn" onClick={() => reorder(m.id, -1)} disabled={i === 0}>↑</button>
+              <button className="btn" onClick={() => reorder(m.id, 1)} disabled={i === methods.length - 1}>↓</button>
+              <button className="btn btn-danger" onClick={() => removeMethod(m.id)}>Remove</button>
+            </div>
+          </div>
+          <label className="field"><span>Step number</span><input value={m.step || ''} onChange={e => update(m.id, 'step', e.target.value)} /></label>
+          <label className="field"><span>Title</span><input value={m.title} onChange={e => update(m.id, 'title', e.target.value)} /></label>
+          <label className="field"><span>Description</span><textarea rows="3" value={m.body || ''} onChange={e => update(m.id, 'body', e.target.value)} /></label>
+        </div>
+      ))}
+      <button className="btn btn-primary" onClick={saveAll} disabled={saving}>{saving ? 'Saving…' : 'Save all methods'}</button>
+    </>
+  );
+}
+
+// ── Testimonials tab ───────────────────────────────────────────────────────────
+function TestimonialsTab({ data, reload }) {
+  const [testimonials, setTestimonials] = useState(data.testimonials);
+  const [saving, setSaving] = useState(false);
+
+  function update(id, k, v) { setTestimonials(ts => ts.map(t => t.id === id ? { ...t, [k]: v } : t)); }
+
+  async function saveAll() {
+    setSaving(true);
+    try {
+      await Promise.all(testimonials.map(t => supabase.from('testimonials').update({ quote: t.quote, author: t.author, role: t.role }).eq('id', t.id)));
+      reload();
+    } finally { setSaving(false); }
+  }
+
+  async function addTestimonial() {
+    const maxOrder = Math.max(0, ...testimonials.map(t => t.display_order || 0)) + 1;
+    const { data: row } = await supabase.from('testimonials').insert({ quote: 'New testimonial…', author: '', role: '', display_order: maxOrder }).select().single();
+    setTestimonials(ts => [...ts, row]);
+  }
+
+  async function removeTestimonial(id) {
+    if (!confirm('Remove this testimonial?')) return;
+    await supabase.from('testimonials').delete().eq('id', id);
+    setTestimonials(ts => ts.filter(t => t.id !== id));
+    reload();
+  }
+
+  async function reorder(id, dir) {
+    const arr = [...testimonials];
+    const i = arr.findIndex(t => t.id === id);
+    const j = i + dir;
+    if (j < 0 || j >= arr.length) return;
+    await Promise.all([
+      supabase.from('testimonials').update({ display_order: arr[j].display_order }).eq('id', arr[i].id),
+      supabase.from('testimonials').update({ display_order: arr[i].display_order }).eq('id', arr[j].id),
+    ]);
+    reload();
+  }
+
+  return (
+    <>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 22 }}>
+        <h1 style={{ fontFamily: 'var(--serif-display)', fontStyle: 'italic', fontWeight: 400, fontSize: 48, margin: 0 }}>Testimonials · {testimonials.length}</h1>
+        <button className="btn btn-primary" onClick={addTestimonial}>＋ Add testimonial</button>
+      </div>
+      {testimonials.map((t, i) => (
+        <div key={t.id} style={{ border: '1px solid var(--hair)', padding: 18, marginBottom: 14, background: i % 2 ? 'var(--paper-2)' : 'transparent' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+            <span className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', color: 'var(--vermillion)', textTransform: 'uppercase' }}>Testimonial #{String(i + 1).padStart(2, '0')}</span>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button className="btn" onClick={() => reorder(t.id, -1)} disabled={i === 0}>↑</button>
+              <button className="btn" onClick={() => reorder(t.id, 1)} disabled={i === testimonials.length - 1}>↓</button>
+              <button className="btn btn-danger" onClick={() => removeTestimonial(t.id)}>Remove</button>
+            </div>
+          </div>
+          <label className="field"><span>Quote</span><textarea rows="3" value={t.quote || ''} onChange={e => update(t.id, 'quote', e.target.value)} /></label>
+          <label className="field"><span>Author</span><input value={t.author || ''} onChange={e => update(t.id, 'author', e.target.value)} /></label>
+          <label className="field"><span>Role / Company</span><input value={t.role || ''} onChange={e => update(t.id, 'role', e.target.value)} /></label>
+        </div>
+      ))}
+      <button className="btn btn-primary" onClick={saveAll} disabled={saving}>{saving ? 'Saving…' : 'Save all testimonials'}</button>
+    </>
+  );
+}
+
 // ── Contact tab ───────────────────────────────────────────────────────────────
 function ContactTab({ data, reload }) {
   const c = data.contact;
@@ -444,11 +578,13 @@ export default function AdminPanel({ data, onLogout, reload }) {
 
       {/* Content */}
       <div className="page" style={{ paddingTop: 28, paddingBottom: 60 }}>
-        {tab === 'samples'  && <SamplesTab  data={data} reload={reload} />}
-        {tab === 'about'    && <AboutTab    data={data} reload={reload} />}
-        {tab === 'services' && <ServicesTab data={data} reload={reload} />}
-        {tab === 'contact'  && <ContactTab  data={data} reload={reload} />}
-        {tab === 'messages' && <MessagesTab />}
+        {tab === 'samples'       && <SamplesTab       data={data} reload={reload} />}
+        {tab === 'about'         && <AboutTab         data={data} reload={reload} />}
+        {tab === 'services'      && <ServicesTab      data={data} reload={reload} />}
+        {tab === 'methods'       && <MethodsTab       data={data} reload={reload} />}
+        {tab === 'testimonials'  && <TestimonialsTab  data={data} reload={reload} />}
+        {tab === 'contact'       && <ContactTab       data={data} reload={reload} />}
+        {tab === 'messages'      && <MessagesTab />}
         {tab === 'danger'   && (
           <div style={{ maxWidth: 560 }}>
             <h1 style={{ fontFamily: 'var(--serif-display)', fontStyle: 'italic', fontWeight: 400, fontSize: 40, margin: '0 0 14px' }}>The shredder</h1>
