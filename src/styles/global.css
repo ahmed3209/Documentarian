@@ -117,5 +117,29 @@ body::-webkit-scrollbar-thumb { background: var(--ink); border: 3px solid var(--
 .react-pdf__Page { background: white !important; }
 
 @media (max-width: 740px) {
-  :root { --gutter: 18px; --col-gap: 22px; }
+  :root {
+    --gutter: 18px;
+    --col-gap: 22px;
+  }
+
+  /* About — stack image above text */
+  #about [style*="260px 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  #about [style*="260px"][style*="aspect-ratio"] {
+    width: 100% !important;
+    max-width: 320px !important;
+  }
+
+  /* Contact — stack form above colophon */
+  #contact [style*="1.2fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* Contact — stack Name + Email fields vertically */
+  #contact [style*="1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
 }
