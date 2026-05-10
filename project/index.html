@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Documentarian — Portfolio</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --paper: #f2ebdd;
+    --paper-2: #ebe3d2;
+    --ink: #14110d;
+    --ink-2: #2a241c;
+    --slate: #5a554d;
+    --slate-2: #7a7368;
+    --rule: #1f1a12;
+    --hair: rgba(31,26,18,0.18);
+    --vermillion: #b8341c;
+    --ochre: #a37a1f;
+
+    --serif-display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+    --serif-body: "Inter Tight", -apple-system, system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --gutter: 28px;
+    --col-gap: 32px;
+    --line: 1px solid var(--rule);
+    --hairline: 1px solid var(--hair);
+
+    --base-fs: 16px;
+    --density-pad: 1;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif-body);
+    font-size: var(--base-fs);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Density variants */
+  body[data-density="compact"] { --col-gap: 22px; --gutter: 20px; }
+  body[data-density="loose"] { --col-gap: 44px; --gutter: 40px; }
+
+  /* Palette variants */
+  body[data-palette="charcoal"] {
+    --paper: #14120e;
+    --paper-2: #1d1a14;
+    --ink: #f1ead8;
+    --ink-2: #d9d0bb;
+    --slate: #a39a86;
+    --slate-2: #877e6c;
+    --rule: #f1ead8;
+    --hair: rgba(241,234,216,0.18);
+    --vermillion: #e0653a;
+    --ochre: #d9a955;
+  }
+  body[data-palette="sepia"] {
+    --paper: #ebd9b6;
+    --paper-2: #e0cd9f;
+    --ink: #2b1d0a;
+    --ink-2: #3d2c14;
+    --slate: #5a4424;
+    --rule: #2b1d0a;
+    --hair: rgba(43,29,10,0.22);
+    --vermillion: #8a2410;
+    --ochre: #7a5615;
+  }
+  body[data-palette="ink"] {
+    --paper: #f6f2e8;
+    --paper-2: #ede8d8;
+    --vermillion: #1d4f8a;
+    --ochre: #4a6b2a;
+  }
+
+  /* Typography pairing variants */
+  body[data-typeface="modern"] {
+    --serif-display: "Instrument Serif", serif;
+    --serif-body: "Inter Tight", sans-serif;
+  }
+  body[data-typeface="classic"] {
+    --serif-display: "Instrument Serif", serif;
+    --serif-body: "Instrument Serif", serif;
+  }
+  body[data-typeface="technical"] {
+    --serif-display: "JetBrains Mono", monospace;
+    --serif-body: "Inter Tight", sans-serif;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--vermillion); }
+
+  ::selection { background: var(--vermillion); color: var(--paper); }
+
+  /* Utility */
+  .mono { font-family: var(--mono); }
+  .serif-display { font-family: var(--serif-display); }
+  .uppercase { text-transform: uppercase; letter-spacing: 0.08em; }
+  .smallcaps { font-variant: all-small-caps; letter-spacing: 0.06em; }
+  .dot::after { content: " · "; opacity: 0.6; }
+
+  /* Page container */
+  .page { max-width: 1320px; margin: 0 auto; padding: 0 var(--gutter); }
+
+  /* Rules */
+  .rule { border-top: var(--line); }
+  .rule-thick { border-top: 4px double var(--rule); }
+  .hair { border-top: var(--hairline); }
+
+  /* Hide scrollbars on certain modal elements */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+
+  /* Edit-mode root attr */
+  body[data-edit="on"] [data-edit-hint]::after {
+    content: " ✎";
+    color: var(--vermillion);
+    font-size: 0.7em;
+  }
+
+  /* Buttons */
+  .btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 10px 14px;
+    border: var(--line);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn:hover { background: var(--ink); color: var(--paper); }
+  .btn-primary { background: var(--ink); color: var(--paper); }
+  .btn-primary:hover { background: var(--vermillion); border-color: var(--vermillion); }
+  .btn-danger { color: var(--vermillion); border-color: var(--vermillion); }
+  .btn-danger:hover { background: var(--vermillion); color: var(--paper); }
+
+  /* Inputs */
+  input, textarea, select {
+    font-family: var(--serif-body);
+    font-size: 15px;
+    color: var(--ink);
+    background: transparent;
+    border: none;
+    border-bottom: var(--line);
+    padding: 8px 2px;
+    width: 100%;
+    outline: none;
+    border-radius: 0;
+  }
+  input:focus, textarea:focus, select:focus { border-bottom-color: var(--vermillion); }
+  textarea { font-family: var(--serif-body); resize: vertical; min-height: 60px; }
+  label.field {
+    display: block;
+    margin-bottom: 18px;
+  }
+  label.field > span {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--slate);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* App mount */
+  #root { min-height: 100vh; }
+
+  /* Loader */
+  .boot {
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--slate); text-transform: uppercase; letter-spacing: 0.2em;
+  }
+
+  /* Scrollbar styling */
+  body::-webkit-scrollbar { width: 12px; }
+  body::-webkit-scrollbar-track { background: var(--paper); }
+  body::-webkit-scrollbar-thumb { background: var(--ink); border: 3px solid var(--paper); }
+
+  @media (max-width: 740px) {
+    :root { --gutter: 18px; --col-gap: 22px; }
+  }
+</style>
+</head>
+<body data-palette="cream" data-typeface="modern" data-density="comfortable">
+<div id="root"><div class="boot"><img src="logo.png" alt="" style="width:48px;height:48px;object-fit:contain;margin-bottom:14px;opacity:0.85" /><div>Loading the press …</div></div></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="data.jsx"></script>
+<script type="text/babel" src="portrait.jsx"></script>
+<script type="text/babel" src="masthead.jsx"></script>
+<script type="text/babel" src="samples.jsx"></script>
+<script type="text/babel" src="sections.jsx"></script>
+<script type="text/babel" src="admin.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+</body>
+</html>
