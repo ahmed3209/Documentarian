@@ -20,23 +20,47 @@ export default function AboutSection({ data }) {
   const { intro, bullets, tail } = parseWhatIDo(data.whatIDo);
 
   return (
-    <section id="about" className="page" style={{ paddingTop: 60, paddingBottom: 60 }}>
+    <section id="about" className="page" style={{ paddingTop: 80, paddingBottom: 80 }}>
       <SectionHead kicker="About" title="About the writer" />
-      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 48, alignItems: 'start' }}>
-        <PortraitDisplay portrait={data.portrait} size={260} />
+
+      <div className="about-grid">
+        <PortraitDisplay portrait={data.portrait} size={280} />
+
         <div>
-          <p style={{ margin: '0 0 24px', fontSize: 19, lineHeight: 1.55, color: 'var(--ink-2)' }}>
+          <p style={{
+            margin: '0 0 32px',
+            fontSize: 20,
+            lineHeight: 1.6,
+            color: 'var(--ink-2)',
+            fontWeight: 400,
+          }}>
             {data.bio}
           </p>
+
           {data.whatIDo && (
-            <div style={{ color: 'var(--ink-2)', fontSize: 15, lineHeight: 1.6, fontWeight: 500, border: '0.8px solid rgb(91,91,91)', borderRadius: 9, padding: '16px 20px' }}>
-              {intro && <div style={{ marginBottom: bullets.length ? 10 : 0 }}>{intro}</div>}
+            <div style={{
+              color: 'var(--ink-2)',
+              fontSize: 15,
+              lineHeight: 1.7,
+              background: 'var(--paper-2)',
+              padding: '22px 26px',
+              borderLeft: '3px solid var(--vermillion)',
+            }}>
+              {intro && (
+                <div style={{ marginBottom: bullets.length ? 12 : 0, fontWeight: 500, color: 'var(--ink)' }}>
+                  {intro}
+                </div>
+              )}
               {bullets.length > 0 && (
-                <ul style={{ margin: '0 0 0 4px', paddingLeft: 18, listStyle: 'disc' }}>
-                  {bullets.map((b, i) => <li key={i} style={{ marginBottom: 2 }}>{b}</li>)}
+                <ul style={{ margin: 0, paddingLeft: 20, listStyle: 'disc' }}>
+                  {bullets.map((b, i) => (
+                    <li key={i} style={{ marginBottom: 5 }}>{b}</li>
+                  ))}
                 </ul>
               )}
-              {tail.map((t, i) => <div key={i} style={{ marginTop: 10 }}>{t}</div>)}
+              {tail.map((t, i) => (
+                <div key={i} style={{ marginTop: 10 }}>{t}</div>
+              ))}
             </div>
           )}
         </div>

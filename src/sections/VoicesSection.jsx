@@ -2,19 +2,70 @@ import SectionHead from './SectionHead';
 
 export default function VoicesSection({ data }) {
   return (
-    <section id="voices" className="page" style={{ paddingTop: 60, paddingBottom: 60 }}>
-      <SectionHead kicker="Voices" title="What clients say" />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 36 }}>
-        {data.testimonials.map((t, i) => (
-          <figure key={t.id || i} style={{ margin: 0 }}>
-            <blockquote style={{ margin: 0, fontFamily: 'var(--serif-display)', fontWeight: 400, fontSize: 22, lineHeight: 1.3 }}>
-              "{t.quote}"
-            </blockquote>
-            <figcaption style={{ marginTop: 14, fontSize: 13, color: 'var(--slate)' }}>
-              {t.author} — {t.role}
-            </figcaption>
-          </figure>
-        ))}
+    <section id="voices" style={{
+      paddingTop: 80,
+      paddingBottom: 80,
+      background: 'var(--paper-2)',
+      borderTop: 'var(--hairline)',
+      borderBottom: 'var(--hairline)',
+    }}>
+      <div className="page">
+        <SectionHead kicker="Voices" title="What clients say" />
+        <div className="voices-grid">
+          {data.testimonials.map((t, i) => (
+            <figure key={t.id || i} style={{ margin: 0 }}>
+              {/* Decorative large opening quote */}
+              <div style={{
+                fontFamily: 'var(--serif-display)',
+                fontSize: 88,
+                lineHeight: 0.65,
+                color: 'var(--vermillion)',
+                marginBottom: 10,
+                userSelect: 'none',
+                opacity: 0.85,
+              }}>
+                &ldquo;
+              </div>
+
+              <blockquote style={{
+                margin: 0,
+                fontFamily: 'var(--serif-display)',
+                fontWeight: 400,
+                fontSize: 23,
+                lineHeight: 1.4,
+                letterSpacing: '-0.01em',
+                color: 'var(--ink)',
+              }}>
+                {t.quote}
+              </blockquote>
+
+              <figcaption style={{
+                marginTop: 22,
+                paddingTop: 18,
+                borderTop: 'var(--hairline)',
+              }}>
+                <div style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--ink)',
+                  letterSpacing: '-0.005em',
+                }}>
+                  {t.author}
+                </div>
+                <div style={{
+                  fontFamily: 'var(--mono)',
+                  fontSize: 10,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: 'var(--slate)',
+                  marginTop: 4,
+                }}>
+                  {t.role}
+                </div>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
       </div>
     </section>
   );

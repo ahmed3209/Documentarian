@@ -1,14 +1,43 @@
 export default function SectionHead({ kicker, title, dek }) {
+  const label = kicker.split('·').pop().trim();
   return (
-    <div style={{ marginBottom: 28, paddingTop: 6 }}>
-      <div style={{ fontSize: 13, color: 'var(--slate)', marginBottom: 6 }}>
-        {kicker.split('·').pop().trim()}
+    <div style={{ marginBottom: 52 }}>
+      {/* Bold top rule + kicker */}
+      <div style={{
+        borderTop: '2px solid var(--ink)',
+        paddingTop: 16,
+        marginBottom: 20,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+      }}>
+        <span className="kicker">{label}</span>
       </div>
-      <h2 style={{ fontFamily: 'var(--serif-display)', fontWeight: 400, fontSize: 'clamp(36px, 4.6vw, 60px)', lineHeight: 1.0, letterSpacing: '-0.02em', margin: '4px 0 8px' }}>
+
+      {/* Section title */}
+      <h2 style={{
+        fontFamily: 'var(--serif-display)',
+        fontWeight: 400,
+        fontSize: 'clamp(42px, 5.8vw, 76px)',
+        lineHeight: 0.96,
+        letterSpacing: '-0.028em',
+        margin: '0 0 20px',
+        color: 'var(--ink)',
+      }}>
         {title}
       </h2>
+
       {dek && (
-        <p style={{ margin: 0, fontSize: 16, color: 'var(--slate)', maxWidth: 640, lineHeight: 1.5 }}>{dek}</p>
+        <p style={{
+          margin: 0,
+          fontSize: 17,
+          color: 'var(--slate)',
+          maxWidth: 560,
+          lineHeight: 1.6,
+          fontWeight: 400,
+        }}>
+          {dek}
+        </p>
       )}
     </div>
   );
