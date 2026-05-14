@@ -31,11 +31,17 @@ export default function ContactSection({ data }) {
   }
 
   return (
-    <section id="contact" className="page" style={{ paddingTop: 36, paddingBottom: 60 }}>
-      <SectionHead kicker="Contact" title="Get in touch" dek="Drop a note. I read everything; I reply within two working days." />
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 48 }}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+    <section id="contact" className="page" style={{ paddingTop: 80, paddingBottom: 80 }}>
+      <SectionHead
+        kicker="Contact"
+        title="Get in touch"
+        dek="Drop a note. I read everything; I reply within two working days."
+      />
+
+      <div className="contact-grid">
+        {/* ── Contact form ── */}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div className="contact-name-email">
             <label className="field"><span>Your name</span><input name="name" required /></label>
             <label className="field"><span>Email address</span><input name="email" type="email" required /></label>
           </div>
@@ -49,10 +55,29 @@ export default function ContactSection({ data }) {
             </select>
           </label>
           <label className="field"><span>Tell me about it</span><textarea name="message" rows="5" /></label>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-            <span className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', color: 'var(--slate)', textTransform: 'uppercase' }}>
+
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 14,
+            flexWrap: 'wrap',
+            marginTop: 8,
+          }}>
+            <span style={{
+              fontFamily: 'var(--mono)',
+              fontSize: 10,
+              letterSpacing: '0.14em',
+              color: 'var(--slate)',
+              textTransform: 'uppercase',
+            }}>
               Or write directly:{' '}
-              <a href={`mailto:${c.email}`} style={{ color: 'var(--vermillion)', textDecoration: 'underline', textUnderlineOffset: 3 }}>{c.email}</a>
+              <a
+                href={`mailto:${c.email}`}
+                style={{ color: 'var(--vermillion)', textDecoration: 'underline', textUnderlineOffset: 3 }}
+              >
+                {c.email}
+              </a>
             </span>
             <button className="btn btn-primary" type="submit" disabled={sending}>
               {sent ? 'Sent ✓' : sending ? 'Sending…' : 'Send message →'}
@@ -60,24 +85,71 @@ export default function ContactSection({ data }) {
           </div>
         </form>
 
-        <aside style={{ borderLeft: '1px solid var(--hair)', paddingLeft: 32 }}>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--vermillion)', textTransform: 'uppercase', marginBottom: 12 }}>The Colophon</div>
-          <dl style={{ margin: 0 }}>
-            {[['Studio', c.location], ['Hours', c.hours], ['Rate', c.rate], ['Next opening', c.nextAvailable]].map(([k, v], i) => (
-              <div key={i} style={{ display: 'grid', gridTemplateColumns: '120px 1fr', padding: '8px 0', borderBottom: '1px dotted var(--hair)' }}>
-                <dt className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', color: 'var(--slate)', textTransform: 'uppercase' }}>{k}</dt>
-                <dd style={{ margin: 0, fontSize: 14 }}>{v}</dd>
+        {/* ── Colophon sidebar ── */}
+        <aside style={{
+          borderLeft: 'var(--hairline)',
+          paddingLeft: 40,
+        }}>
+          <div className="kicker" style={{ marginBottom: 20 }}>The Colophon</div>
+
+          <dl style={{ margin: '0 0 28px' }}>
+            {[
+              ['Studio', c.location],
+              ['Hours', c.hours],
+              ['Rate', c.rate],
+              ['Next opening', c.nextAvailable],
+            ].map(([k, v]) => v ? (
+              <div key={k} style={{
+                display: 'grid',
+                gridTemplateColumns: '110px 1fr',
+                padding: '10px 0',
+                borderBottom: '1px dotted var(--hair)',
+                gap: 8,
+              }}>
+                <dt style={{
+                  fontFamily: 'var(--mono)',
+                  fontSize: 10,
+                  letterSpacing: '0.14em',
+                  color: 'var(--slate)',
+                  textTransform: 'uppercase',
+                  paddingTop: 1,
+                }}>
+                  {k}
+                </dt>
+                <dd style={{ margin: 0, fontSize: 14, lineHeight: 1.5 }}>{v}</dd>
               </div>
-            ))}
+            ) : null)}
           </dl>
+
           {c.socials.length > 0 && (
-            <div style={{ marginTop: 22 }}>
-              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--slate)', textTransform: 'uppercase', marginBottom: 8 }}>Elsewhere</div>
+            <div>
+              <div className="kicker" style={{ marginBottom: 14 }}>Elsewhere</div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {c.socials.map((s, i) => (
-                  <li key={s.id || i} style={{ padding: '6px 0', display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted var(--hair)' }}>
-                    <span className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--slate)', textTransform: 'uppercase' }}>{s.label}</span>
-                    <a href={s.url} style={{ fontSize: 13 }}>{s.handle}</a>
+                  <li key={s.id || i} style={{
+                    padding: '8px 0',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderBottom: '1px dotted var(--hair)',
+                  }}>
+                    <span style={{
+                      fontFamily: 'var(--mono)',
+                      fontSize: 10,
+                      letterSpacing: '0.12em',
+                      color: 'var(--slate)',
+                      textTransform: 'uppercase',
+                    }}>
+                      {s.label}
+                    </span>
+                    <a
+                      href={s.url}
+                      style={{ fontSize: 13, transition: 'color 0.15s' }}
+                      onMouseEnter={e => { e.currentTarget.style.color = 'var(--vermillion)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = ''; }}
+                    >
+                      {s.handle}
+                    </a>
                   </li>
                 ))}
               </ul>
