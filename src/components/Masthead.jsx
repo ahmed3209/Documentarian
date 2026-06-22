@@ -1,15 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-export default function Masthead({ data, onAdminPing }) {
+export default function Masthead({ data, onAdminPing, theme, onToggleTheme }) {
   const m = data.meta;
   const [clicks, setClicks] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const [activeId, setActiveId] = useState('');
+  const progressRef = useRef(null);
 
   useEffect(() => {
-    const handle = () => setScrolled(window.scrollY > 56);
+    const handle = () => {
+      setScrolled(window.scrollY > 56);
+      if (progressRef.current) {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+        progressRef.current.style.width = `${pct}%`;
+      }
+    };
+    handle();
     window.addEventListener('scroll', handle, { passive: true });
-    return () => window.removeEventListener('scroll', handle);
+    window.addEventListener('resize', handle, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handle);
+      window.removeEventListener('resize', handle);
+    };
   }, []);
 
   // Highlight the nav item for the section currently in view
@@ -54,15 +67,17 @@ export default function Masthead({ data, onAdminPing }) {
       position: 'sticky',
       top: 0,
       zIndex: 100,
-      background: scrolled ? 'rgba(242,235,221,0.93)' : 'var(--paper)',
+      background: scrolled ? 'var(--paper-blur)' : 'var(--paper)',
       backdropFilter: scrolled ? 'blur(18px)' : 'none',
       WebkitBackdropFilter: scrolled ? 'blur(18px)' : 'none',
       borderBottom: 'var(--hairline)',
       boxShadow: scrolled ? '0 1px 24px rgba(20,17,13,0.07)' : 'none',
       transition: 'background 0.35s ease, box-shadow 0.35s ease',
     }}>
-      {/* vermillion accent line at very top */}
-      <div style={{ height: 3, background: 'var(--vermillion)', width: '100%' }} />
+      {/* scroll progress bar (doubles as the top accent line) */}
+      <div className="progress-track">
+        <div className="progress-fill" ref={progressRef} />
+      </div>
 
       <div className="page" style={{
         paddingTop: scrolled ? 10 : 26,
@@ -105,29 +120,52 @@ export default function Masthead({ data, onAdminPing }) {
           </div>
 
           {/* Navigation */}
-          <nav style={{
-            display: 'flex',
-            gap: 28,
-            fontFamily: 'var(--mono)',
-            fontSize: 10.5,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-          }}>
-            {['About', 'Work', 'Services', 'Contact'].map(label => {
-              const id = label.toLowerCase();
-              const active = activeId === id;
-              return (
-                <a
-                  key={label}
-                  href={`#${id}`}
-                  className={active ? 'is-active' : undefined}
-                  aria-current={active ? 'true' : undefined}
-                >
-                  {label}
-                </a>
-              );
-            })}
-          </nav>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
+            <nav style={{
+              display: 'flex',
+              gap: 28,
+              fontFamily: 'var(--mono)',
+              fontSize: 10.5,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+            }}>
+              {['About', 'Work', 'Services', 'Contact'].map(label => {
+                const id = label.toLowerCase();
+                const active = activeId === id;
+                return (
+                  <a
+                    key={label}
+                    href={`#${id}`}
+                    className={active ? 'is-active' : undefined}
+                    aria-current={active ? 'true' : undefined}
+                  >
+                    {label}
+                  </a>
+                );
+              })}
+            </nav>
+
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={onToggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            >
+              {theme === 'dark' ? (
+                /* sun */
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+                </svg>
+              ) : (
+                /* moon */
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Tagline — hidden when scrolled */}

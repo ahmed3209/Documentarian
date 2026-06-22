@@ -43,7 +43,7 @@ export default function ContactSection({ data }) {
 
       <div className="contact-grid">
         {/* ── Contact form ── */}
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <form onSubmit={handleSubmit} className="reveal" style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <div className="contact-name-email">
             <label className="field"><span>Your name</span><input name="name" required /></label>
             <label className="field"><span>Email address</span><input name="email" type="email" required /></label>
@@ -83,7 +83,7 @@ export default function ContactSection({ data }) {
               </a>
             </span>
             <button className="btn btn-primary" type="submit" disabled={sending}>
-              {sent ? 'Sent ✓' : sending ? 'Sending…' : 'Send message →'}
+              {sent ? 'Sent ✓' : sending ? 'Sending…' : <>Send message <span className="arrow">→</span></>}
             </button>
           </div>
 
@@ -114,11 +114,34 @@ export default function ContactSection({ data }) {
         </form>
 
         {/* ── Colophon sidebar ── */}
-        <aside style={{
+        <aside className="reveal reveal-delay-2" style={{
           borderLeft: 'var(--hairline)',
           paddingLeft: 40,
         }}>
-          <div className="kicker" style={{ marginBottom: 20 }}>The Colophon</div>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 20,
+            gap: 12,
+          }}>
+            <div className="kicker">The Colophon</div>
+            {c.nextAvailable && (
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 7,
+                fontFamily: 'var(--mono)',
+                fontSize: 10,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'var(--slate)',
+              }}>
+                <span className="avail-dot" aria-hidden="true" />
+                Available
+              </span>
+            )}
+          </div>
 
           <dl style={{ margin: '0 0 28px' }}>
             {[

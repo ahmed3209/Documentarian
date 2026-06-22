@@ -9,6 +9,9 @@
   --hair: rgba(31, 26, 18, 0.15);
   --vermillion: #b8341c;
   --ochre: #a37a1f;
+  --paper-blur: rgba(242, 235, 221, 0.85);
+  --ghost: rgba(31, 26, 18, 0.09);
+  --positive: #3f7a4f;
 
   --shadow-sm: 0 1px 3px rgba(20,17,13,0.05), 0 4px 12px rgba(20,17,13,0.06);
   --shadow-md: 0 2px 8px rgba(20,17,13,0.07), 0 12px 28px rgba(20,17,13,0.09);
@@ -70,6 +73,9 @@ body[data-palette="charcoal"] {
   --slate: #a39a86; --slate-2: #877e6c;
   --rule: #f1ead8;  --hair: rgba(241, 234, 216, 0.18);
   --vermillion: #e0653a; --ochre: #d9a955;
+  --paper-blur: rgba(20, 18, 14, 0.85);
+  --ghost: rgba(241, 234, 216, 0.10);
+  --positive: #6bbf85;
 }
 body[data-palette="sepia"] {
   --paper: #ebd9b6; --paper-2: #e0cd9f;
@@ -93,6 +99,7 @@ a:hover { color: var(--vermillion); }
 /* Nav links: tap targets + hover/active color (CSS so :hover/:focus work) */
 header nav a,
 footer nav a {
+  position: relative;
   display: inline-block;
   padding: 14px 6px;
   margin: -14px -6px;
@@ -103,6 +110,24 @@ header nav a:hover,
 footer nav a:hover,
 header nav a.is-active {
   color: var(--vermillion);
+}
+/* Animated underline on the masthead nav */
+header nav a::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 9px;
+  height: 1px;
+  background: var(--vermillion);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.25s var(--ease);
+}
+header nav a:hover::after,
+header nav a.is-active::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  header nav a::after { transition: none; }
 }
 ::selection { background: var(--vermillion); color: var(--paper); }
 
@@ -122,12 +147,16 @@ header nav a.is-active {
   background: transparent;
   color: var(--ink);
   cursor: pointer;
-  transition: background var(--ease) 0.18s, color var(--ease) 0.18s, border-color var(--ease) 0.18s;
+  transition: background var(--ease) 0.18s, color var(--ease) 0.18s,
+    border-color var(--ease) 0.18s, transform var(--ease) 0.15s;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
-.btn:hover { background: var(--ink); color: var(--paper); }
+.btn:hover { background: var(--ink); color: var(--paper); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn .arrow { display: inline-block; transition: transform 0.2s var(--ease); }
+.btn:hover .arrow { transform: translateX(3px); }
 .btn-primary { background: var(--ink); color: var(--paper); }
 .btn-primary:hover { background: var(--vermillion); border-color: var(--vermillion); }
 .btn-danger { color: var(--vermillion); border-color: var(--vermillion); }
@@ -244,6 +273,17 @@ body::-webkit-scrollbar-thumb { background: var(--ink-2); border: 3px solid var(
   transition: background 0.22s var(--ease), color 0.22s var(--ease);
   position: relative;
 }
+.service-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 0;
+  background: var(--vermillion);
+  transition: height 0.3s var(--ease);
+}
+.service-card:hover::before { height: 100%; }
 .service-card:hover { background: var(--ink); color: var(--paper); }
 .service-card .sc-num {
   font-family: var(--mono);
@@ -278,9 +318,15 @@ body::-webkit-scrollbar-thumb { background: var(--ink-2); border: 3px solid var(
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s var(--ease);
+  background: var(--paper);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
-.sample-card:hover { transform: translateY(-4px); }
+.sample-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.sample-card:active { transform: translateY(-2px); }
+.sample-card:focus-visible {
+  outline: 2px solid var(--vermillion);
+  outline-offset: 4px;
+}
 .sample-card .sc-thumb-wrap {
   position: relative;
   overflow: hidden;
@@ -311,7 +357,7 @@ body::-webkit-scrollbar-thumb { background: var(--ink-2); border: 3px solid var(
   font-size: clamp(72px, 9vw, 108px);
   font-weight: 400;
   line-height: 0.82;
-  color: rgba(31,26,18,0.09);
+  color: var(--ghost);
   letter-spacing: -0.04em;
   margin-bottom: 10px;
   -webkit-user-select: none;
@@ -379,4 +425,96 @@ body::-webkit-scrollbar-thumb { background: var(--ink-2); border: 3px solid var(
   #contact [style*="1fr 1fr"] {
     grid-template-columns: 1fr !important;
   }
+}
+
+/* ── Scroll reveal ───────────────────────────────────── */
+/* Uses animation (not transition) so element hover transforms stay free. */
+.reveal { opacity: 0; }
+@keyframes revealIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal.visible { animation: revealIn 0.6s var(--ease) both; }
+.reveal.reveal-delay-1.visible { animation-delay: 0.08s; }
+.reveal.reveal-delay-2.visible { animation-delay: 0.16s; }
+.reveal.reveal-delay-3.visible { animation-delay: 0.24s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; }
+  .reveal.visible { animation: none; }
+}
+
+/* ── Scroll progress bar (sits in the masthead accent line) ── */
+.progress-track { position: relative; height: 3px; background: var(--hair); }
+.progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--vermillion);
+  will-change: width;
+}
+
+/* ── Theme toggle ────────────────────────────────────── */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: var(--hairline);
+  background: transparent;
+  color: var(--slate);
+  cursor: pointer;
+  transition: color 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.15s var(--ease);
+}
+.theme-toggle:hover { color: var(--vermillion); border-color: var(--vermillion); transform: translateY(-1px); }
+.theme-toggle:active { transform: translateY(0); }
+.theme-toggle svg { width: 16px; height: 16px; }
+
+/* ── Work card: persistent read affordance ───────────── */
+.sc-read {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+}
+.sc-read .arrow { display: inline-block; transition: transform 0.2s var(--ease); }
+.sample-card:hover .sc-read .arrow { transform: translateX(4px); }
+
+/* ── Empty state ─────────────────────────────────────── */
+.empty-state {
+  border: 1px dashed var(--hair);
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--slate);
+}
+.empty-state .es-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.empty-state .es-body { font-size: 14px; line-height: 1.6; opacity: 0.8; }
+
+/* ── Availability dot (contact colophon) ─────────────── */
+.avail-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--positive);
+  animation: pulseDot 2s var(--ease) infinite;
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .avail-dot { animation: none; }
 }

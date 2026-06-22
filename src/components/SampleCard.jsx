@@ -111,9 +111,22 @@ function SampleThumb({ sample }) {
   );
 }
 
-export default function SampleCard({ sample, onOpen }) {
+export default function SampleCard({ sample, onOpen, index = 0 }) {
+  function open() { onOpen(sample); }
+  function onKeyDown(e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+  }
+
   return (
-    <article className="sample-card" onClick={() => onOpen(sample)}>
+    <div className={`reveal reveal-delay-${(index % 3) + 1}`}>
+    <article
+      className="sample-card"
+      onClick={open}
+      onKeyDown={onKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`Read ${sample.title}`}
+    >
       <div className="sc-thumb-wrap">
         <SampleThumb sample={sample} />
       </div>
@@ -158,7 +171,12 @@ export default function SampleCard({ sample, onOpen }) {
         }}>
           {sample.excerpt}
         </p>
+
+        <span className="sc-read">
+          {sample.pdf_url ? 'Read document' : 'View sample'} <span className="arrow">→</span>
+        </span>
       </div>
     </article>
+    </div>
   );
 }

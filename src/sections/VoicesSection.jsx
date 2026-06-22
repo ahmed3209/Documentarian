@@ -13,7 +13,7 @@ export default function VoicesSection({ data }) {
         <SectionHead kicker="Voices" title="What clients say" />
         <div className="voices-grid">
           {data.testimonials.map((t, i) => (
-            <figure key={t.id || i} style={{ margin: 0 }}>
+            <figure key={t.id || i} className={`reveal reveal-delay-${(i % 3) + 1}`} style={{ margin: 0 }}>
               {/* Decorative large opening quote */}
               <div style={{
                 fontFamily: 'var(--serif-display)',
