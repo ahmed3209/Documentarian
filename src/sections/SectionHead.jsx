@@ -1,7 +1,7 @@
 export default function SectionHead({ kicker, title, dek }) {
   const label = kicker.split('·').pop().trim();
   return (
-    <div style={{ marginBottom: 52 }}>
+    <div className="reveal" style={{ marginBottom: 52 }}>
       {/* Bold top rule + kicker */}
       <div style={{
         borderTop: '2px solid var(--ink)',

@@ -6,7 +6,7 @@ export default function ServicesSection({ data }) {
       <SectionHead kicker="Services" title="What I do" />
       <div className="services-grid">
         {data.services.map((s, i) => (
-          <div key={s.id} className="service-card">
+          <div key={s.id} className={`service-card reveal reveal-delay-${(i % 3) + 1}`}>
             <div className="sc-num">{String(i + 1).padStart(2, '0')}</div>
             <h3 className="sc-title">{s.title}</h3>
             <p className="sc-desc">{s.description}</p>

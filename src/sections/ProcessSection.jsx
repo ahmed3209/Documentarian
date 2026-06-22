@@ -6,7 +6,7 @@ export default function ProcessSection({ data }) {
       <SectionHead kicker="Method" title="How a document gets made" />
       <div className="process-grid">
         {data.process.map((p, i) => (
-          <div key={p.id || i} style={{
+          <div key={p.id || i} className={`reveal reveal-delay-${(i % 3) + 1}`} style={{
             paddingRight: 40,
             paddingBottom: 48,
             borderRight: 'var(--hairline)',

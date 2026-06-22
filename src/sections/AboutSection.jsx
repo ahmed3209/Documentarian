@@ -24,9 +24,11 @@ export default function AboutSection({ data }) {
       <SectionHead kicker="About" title="About the writer" />
 
       <div className="about-grid">
-        <PortraitDisplay portrait={data.portrait} size={280} />
+        <div className="reveal reveal-delay-1">
+          <PortraitDisplay portrait={data.portrait} size={280} />
+        </div>
 
-        <div>
+        <div className="reveal reveal-delay-2">
           <p style={{
             margin: '0 0 32px',
             fontSize: 20,

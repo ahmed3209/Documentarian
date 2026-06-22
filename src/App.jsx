@@ -1,6 +1,7 @@
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { supabase, isConfigured } from './lib/supabase';
 import { usePortfolioData } from './hooks/useData';
+import { useScrollReveal } from './hooks/useScrollReveal';
 import Masthead from './components/Masthead';
 import Footer from './components/Footer';
 import AboutSection from './sections/AboutSection';
@@ -19,6 +20,11 @@ export default function App() {
   const [route, setRoute] = useState(() => location.hash === '#admin' ? 'admin-login' : 'public');
   const [openSample, setOpenSample] = useState(null);
   const [session, setSession] = useState(null);
+  const [theme, setTheme] = useState(() => {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'light' || stored === 'dark') return stored;
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
@@ -27,10 +33,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.body.dataset.palette = 'cream';
     document.body.dataset.typeface = 'modern';
     document.body.dataset.density = 'comfortable';
   }, []);
+
+  useEffect(() => {
+    document.body.dataset.palette = theme === 'dark' ? 'charcoal' : 'cream';
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  // Reveal-on-scroll once the public content is mounted
+  useScrollReveal(route === 'public' && !!data);
 
   if (!isConfigured) {
     return (
@@ -79,7 +92,12 @@ export default function App() {
 
   return (
     <>
-      <Masthead data={data} onAdminPing={gotoAdmin} />
+      <Masthead
+        data={data}
+        onAdminPing={gotoAdmin}
+        theme={theme}
+        onToggleTheme={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
+      />
       <AboutSection data={data} />
       <ServicesSection data={data} />
       <WorkSection data={data} onOpenSample={setOpenSample} />
