@@ -51,13 +51,7 @@ export default function Footer({ data, onAdminPing }) {
               marginBottom: 10,
             }}>
               {['About', 'Work', 'Services', 'Contact'].map(label => (
-                <a
-                  key={label}
-                  href={`#${label.toLowerCase()}`}
-                  style={{ transition: 'color 0.15s' }}
-                  onMouseEnter={e => { e.currentTarget.style.color = 'var(--vermillion)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--slate)'; }}
-                >
+                <a key={label} href={`#${label.toLowerCase()}`}>
                   {label}
                 </a>
               ))}

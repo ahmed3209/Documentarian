@@ -4,27 +4,30 @@ import SectionHead from './SectionHead';
 
 export default function ContactSection({ data }) {
   const [sent, setSent] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [sending, setSending] = useState(false);
   const c = data.contact;
 
   async function handleSubmit(e) {
     e.preventDefault();
     setSending(true);
-    const fd = new FormData(e.target);
+    setFailed(false);
+    const form = e.target;
+    const fd = new FormData(form);
     try {
-      await supabase.from('contact_submissions').insert({
+      const { error } = await supabase.from('contact_submissions').insert({
         name: fd.get('name'),
         email: fd.get('email'),
         company: fd.get('company'),
         service_interest: fd.get('service'),
         message: fd.get('message'),
       });
+      if (error) throw error;
       setSent(true);
-      e.target.reset();
+      form.reset();
       setTimeout(() => setSent(false), 5000);
     } catch {
-      setSent(true);
-      setTimeout(() => setSent(false), 5000);
+      setFailed(true);
     } finally {
       setSending(false);
     }
@@ -82,6 +85,31 @@ export default function ContactSection({ data }) {
             <button className="btn btn-primary" type="submit" disabled={sending}>
               {sent ? 'Sent ✓' : sending ? 'Sending…' : 'Send message →'}
             </button>
+          </div>
+
+          {/* Status — announced to screen readers */}
+          <div
+            role="status"
+            aria-live="polite"
+            style={{
+              fontFamily: 'var(--mono)',
+              fontSize: 11,
+              letterSpacing: '0.08em',
+              lineHeight: 1.5,
+              marginTop: 12,
+              minHeight: 17,
+              color: failed ? 'var(--vermillion)' : 'var(--slate)',
+            }}
+          >
+            {sent && 'Thanks — your message is on its way. I reply within two working days.'}
+            {failed && (
+              <>
+                Something went wrong sending that. Please email me directly at{' '}
+                <a href={`mailto:${c.email}`} style={{ color: 'var(--vermillion)', textDecoration: 'underline', textUnderlineOffset: 3 }}>
+                  {c.email}
+                </a>.
+              </>
+            )}
           </div>
         </form>
 

@@ -4,11 +4,28 @@ export default function Masthead({ data, onAdminPing }) {
   const m = data.meta;
   const [clicks, setClicks] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  const [activeId, setActiveId] = useState('');
 
   useEffect(() => {
     const handle = () => setScrolled(window.scrollY > 56);
     window.addEventListener('scroll', handle, { passive: true });
     return () => window.removeEventListener('scroll', handle);
+  }, []);
+
+  // Highlight the nav item for the section currently in view
+  useEffect(() => {
+    const els = ['about', 'work', 'services', 'contact']
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
+    if (!els.length) return;
+    const obs = new IntersectionObserver(
+      entries => {
+        entries.forEach(e => { if (e.isIntersecting) setActiveId(e.target.id); });
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
   }, []);
 
   function handleTitleClick() {
@@ -63,7 +80,7 @@ export default function Masthead({ data, onAdminPing }) {
                   width: scrolled ? 32 : 44,
                   height: scrolled ? 32 : 44,
                   objectFit: 'contain',
-                  transition: 'all 0.3s ease',
+                  transition: 'width 0.3s ease, height 0.3s ease',
                 }}
               />
             )}
@@ -96,17 +113,20 @@ export default function Masthead({ data, onAdminPing }) {
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
           }}>
-            {['About', 'Work', 'Services', 'Contact'].map(label => (
-              <a
-                key={label}
-                href={`#${label.toLowerCase()}`}
-                style={{ color: 'var(--slate)', transition: 'color 0.15s ease' }}
-                onMouseEnter={e => { e.currentTarget.style.color = 'var(--vermillion)'; }}
-                onMouseLeave={e => { e.currentTarget.style.color = 'var(--slate)'; }}
-              >
-                {label}
-              </a>
-            ))}
+            {['About', 'Work', 'Services', 'Contact'].map(label => {
+              const id = label.toLowerCase();
+              const active = activeId === id;
+              return (
+                <a
+                  key={label}
+                  href={`#${id}`}
+                  className={active ? 'is-active' : undefined}
+                  aria-current={active ? 'true' : undefined}
+                >
+                  {label}
+                </a>
+              );
+            })}
           </nav>
         </div>
 

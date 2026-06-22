@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { supabase, isConfigured } from './lib/supabase';
 import { usePortfolioData } from './hooks/useData';
 import Masthead from './components/Masthead';
@@ -11,7 +11,8 @@ import VoicesSection from './sections/VoicesSection';
 import ContactSection from './sections/ContactSection';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminPanel from './components/admin/AdminPanel';
-import PDFViewer from './components/PDFViewer';
+
+const PDFViewer = lazy(() => import('./components/PDFViewer'));
 
 export default function App() {
   const { data, loading, error, reload } = usePortfolioData();
@@ -86,7 +87,11 @@ export default function App() {
       <VoicesSection data={data} />
       <ContactSection data={data} />
       <Footer data={data} onAdminPing={gotoAdmin} />
-      {openSample && <PDFViewer sample={openSample} onClose={() => setOpenSample(null)} />}
+      {openSample && (
+        <Suspense fallback={null}>
+          <PDFViewer sample={openSample} onClose={() => setOpenSample(null)} />
+        </Suspense>
+      )}
     </>
   );
 }
